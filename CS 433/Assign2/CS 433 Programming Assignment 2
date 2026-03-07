@@ -1,0 +1,115 @@
+CS433 Programming Assignment 2 
+Simple UNIX Shell Implementation Report 
+Name: Denay Stokely  
+Course: CS433 
+Assignment: Programming Assignment 2 
+Program File: prog.cpp 
+1. Introduction 
+The purpose of this assignment is to implement a simple UNIX shell in C++ that accepts user 
+commands and executes them in separate processes. The shell simulates basic behavior of 
+standard UNIX shells such as bash. 
+The program uses system calls including: 
+● fork() 
+● execvp() 
+● wait() 
+● dup2() 
+● pipe() 
+● open() 
+2. Program Design 
+The shell follows this execution flow: 
+1. Display prompt osh> 
+2. Read user input 
+3. Handle built-in commands (exit, !!) 
+4. Detect special operators (&, <, >, |) 
+5. Create child process using fork() 
+6. Execute command using execvp() 
+7. Parent waits unless command runs in background 
+3. Implemented Features 
+3.1 Command Execution 
+● The shell parses the input string into arguments. 
+● A child process is created using fork(). 
+● The child executes the command using execvp(). 
+● If execution fails, the shell prints: 
+Command not found 
+3.2 Background Execution (&) 
+If a command ends with &, the shell: 
+● Runs the process in background 
+● Does not call wait() 
+● Immediately returns to the prompt 
+Example: 
+osh> sleep 5 & 
+3.3 Command History (!!) 
+The shell stores the most recent command. 
+● If user types !!, the previous command is printed and executed again. 
+● If no history exists, the shell prints: 
+No command history found. 
+Example: 
+osh> ls -l 
+osh> !! 
+ls -l 
+3.4 Input Redirection (<) 
+The shell supports input redirection. 
+Example: 
+osh> cat < file.txt 
+Implementation: 
+● open() file in read-only mode 
+● dup2() redirects STDIN to file 
+● Execute command normally 
+3.5 Output Redirection (>) 
+The shell supports output redirection. 
+Example: 
+osh> ls > out.txt 
+Implementation: 
+● open() file with O_CREAT | O_WRONLY | O_TRUNC 
+● dup2() redirects STDOUT to file 
+3.6 Pipe (|) — Extra Credit 
+The shell supports a single pipe between two commands. 
+Example: 
+osh> ls -l | wc -l 
+Implementation: 
+1. Create pipe using pipe(fd) 
+2. Fork first child → write to pipe 
+3. Fork second child → read from pipe 
+4. Parent waits for both processes 
+4. Error Handling 
+The shell handles errors safely: 
+● Invalid command → prints Command not found 
+● No history → prints No command history found. 
+● File open failure handled properly 
+● Program does not crash on invalid input 
+● Empty commands are ignored 
+5. Key System Calls Used 
+System Call 
+fork() 
+execvp() 
+wait() 
+dup2() 
+pipe() 
+open() 
+Purpose 
+Create child process 
+Execute command 
+Wait for child process 
+Redirect input/output 
+Create pipe between 
+processes 
+Open files for redirection 
+6. Testing 
+The program was tested for: 
+● Normal commands (ls, pwd, date) 
+● Invalid commands 
+● Background execution 
+● History execution 
+● Input redirection 
+● Output redirection 
+● Pipe commands 
+All required features function correctly. 
+7. Conclusion 
+This assignment demonstrates understanding of: 
+● Process creation 
+● Parent/child process relationship 
+● Inter-process communication 
+● File descriptor manipulation 
+● Basic shell behavior 
+The implemented shell successfully supports command execution, background processing, 
+history, redirection, and piping. 
