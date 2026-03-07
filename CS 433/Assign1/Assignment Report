@@ -1,0 +1,96 @@
+CS 433 – Assignment 1 Report 
+Implementation of PCB Table and Ready Queue 
+Course: CS 433 – Operating Systems 
+Assignment: Assignment 1 
+Group Members: Denay Stokely 
+Date: 2/6/2026 
+1. Introduction 
+The goal of Assignment 1 is to review C/C++ data structures and become familiar with the 
+Unix/Linux programming environment, Makefiles, and compilation workflow that will be used 
+throughout the course. This assignment focuses on implementing several fundamental 
+operating-system data structures, including the Process Control Block (PCB), a PCB table, and 
+a Ready Queue used by a CPU scheduler. 
+Through this assignment, we practiced dynamic memory management, class design in C++, 
+and performance analysis of different data-structure choices. We also evaluated the correctness 
+and efficiency of our implementation using the provided test programs. 
+2. Design Overview 
+2.1 Process Control Block (PCB) 
+The PCB represents a process in the system. In this assignment, each PCB contains: 
+● A unique integer process ID 
+● An integer priority value (1–50) 
+● A process state (NEW, READY, RUNNING, WAITING, or TERMINATED) 
+When a PCB is first created, it is initialized in the NEW state. The PCB class provides simple 
+accessor and mutator functions to retrieve and update its attributes. State transitions are 
+handled by other components (such as the ReadyQueue) according to the assignment 
+requirements. 
+2.2 PCB Table 
+The PCBTable stores all PCBs currently existing in the system. It is implemented as a container 
+of dynamically allocated PCB objects (e.g., an array or list of PCB*). 
+The PCBTable is responsible for: 
+● Creating new PCBs 
+● Providing access to PCBs by index or ID 
+● Releasing all dynamically allocated memory when the table is destroyed 
+Special care was taken to ensure that all allocated PCBs are properly deleted in the destructor 
+to avoid memory leaks. 
+2.3 Ready Queue 
+The ReadyQueue represents the set of processes that are ready to be scheduled on the CPU. It 
+is implemented as a priority queue, where the process with the highest priority is always 
+selected first. 
+To meet the assignment constraints, no STL containers (such as priority_queue or vector) 
+were used in the ReadyQueue implementation. Instead, a custom data structure was chosen to 
+efficiently support priority-based scheduling. 
+The ReadyQueue supports the following operations: 
+● addPCB(PCB*): Inserts a PCB into the queue and sets its state to READY 
+● removePCB(): Removes and returns the PCB with the highest priority and sets its state 
+to RUNNING 
+● size(): Returns the number of PCBs in the queue 
+● displayAll(): Displays the IDs and priorities of all PCBs in the queue 
+3. Data Structure Choice and Time Complexity 
+The priority range of PCBs is limited to values between 1 and 50. This constraint allows for 
+efficient implementation choices. 
+The ReadyQueue is implemented using a structure that groups PCBs by priority level. This 
+design allows fast insertion and efficient selection of the highest-priority process. 
+Time Complexity Analysis 
+Let n be the total number of processes currently in the ReadyQueue. 
+● Insertion (addPCB): O(1) 
+A PCB is directly placed into the structure corresponding to its priority. 
+● Removal (removePCB): O(50) → effectively O(1) 
+The queue is scanned from highest to lowest priority to find the next available PCB. 
+Since the priority range is fixed, this operation runs in constant time. 
+● Display (displayAll): O(n) 
+All PCBs in the queue are traversed and displayed. 
+This design is well suited for operating-system scheduling, where fast insertion and predictable 
+removal times are critical. 
+4. Testing and Performance Evaluation 
+4.1 Correctness Testing (test1) 
+The test1 program verifies the correctness of the ReadyQueue implementation by performing 
+a sequence of insertions and removals with known priorities. The program displays the contents 
+of the ReadyQueue after each operation. 
+The output produced by our implementation exactly matches the expected output in 
+test1_out.txt, confirming that the ReadyQueue correctly maintains priority order and 
+updates process states as required. 
+4.2 Performance Testing (test2) 
+The test2 program evaluates performance under heavy workload conditions. It creates 500 
+PCBs with random priorities and repeatedly performs random insert and remove operations on 
+the ReadyQueue for 1,000,000 iterations. 
+With compiler optimizations enabled (-O2 or -O3), the program completes execution in under 
+one second. The observed runtime aligns with the expected constant-time behavior of the 
+ReadyQueue operations, validating the efficiency of the chosen data structure. 
+Because the operations involve randomness, the final content of the ReadyQueue may differ 
+from the sample output, which is expected behavior. 
+5. Results and Discussion 
+This assignment demonstrates how careful data-structure design can significantly affect 
+performance. By exploiting the limited priority range, the ReadyQueue achieves fast and 
+predictable scheduling behavior. 
+Challenges encountered during development included managing dynamic memory safely and 
+ensuring correct state transitions for PCBs. Debugging output mismatches in test1 helped 
+verify correctness, while performance testing emphasized the importance of efficient algorithms 
+in OS-level code. 
+6. Conclusion 
+In this assignment, we successfully implemented core operating-system data structures, 
+including PCB, PCBTable, and a priority-based ReadyQueue. The implementation satisfies all 
+functional requirements, passes correctness tests, and demonstrates strong performance under 
+stress testing. 
+This project reinforced key concepts in operating systems, such as process management, 
+scheduling, and performance trade-offs, and provides a solid foundation for future assignments 
+involving more complex OS components. 
