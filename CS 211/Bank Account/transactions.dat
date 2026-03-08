@@ -1,0 +1,5 @@
+deposit 100
+withdraw 50
+deposit 25
+undo
+redo
